@@ -1,35 +1,40 @@
-const Course = require('../models').Course;
-const Student = require('../models').Student;
-const Lecturer = require('../models').Lecturer;
+const { Course } = require('../models');
+const { Student } = require('../models');
+const { Lecturer } = require('../models');
 
 module.exports = {
   list(req, res) {
-    return Course
-      .findAll({
-        include: [{
+    return Course.findAll({
+      include: [
+        {
           model: Student,
-          as: 'students'
-        },{
+          as: 'students',
+        },
+        {
           model: Lecturer,
-          as: 'lecturer'
-        }],
-        order: [
-          ['createdAt', 'DESC'],
-          [{ model: Student, as: 'students' }, 'createdAt', 'DESC'],
-        ],
-      })
+          as: 'lecturer',
+        },
+      ],
+      order: [
+        ['createdAt', 'DESC'],
+        [{ model: Student, as: 'students' }, 'createdAt', 'DESC'],
+      ],
+    })
       .then((courses) => res.status(200).send(courses))
-      .catch((error) => { res.status(400).send(error); });
+      .catch((error) => {
+        res.status(400).send(error);
+      });
   },
 
   getById(req, res) {
-    return Course
-      .findByPk(req.params.id, {
-        include: [{
+    return Course.findByPk(req.params.id, {
+      include: [
+        {
           model: Course,
-          as: 'course'
-        }],
-      })
+          as: 'course',
+        },
+      ],
+    })
       .then((course) => {
         if (!course) {
           return res.status(404).send({
@@ -42,23 +47,23 @@ module.exports = {
   },
 
   add(req, res) {
-    return Course
-      .create({
-        course_name: req.body.course_name,
-      })
+    return Course.create({
+      course_name: req.body.course_name,
+    })
       .then((course) => res.status(201).send(course))
       .catch((error) => res.status(400).send(error));
   },
 
   update(req, res) {
-    return Course
-      .findByPk(req.params.id, {
-        include: [{
+    return Course.findByPk(req.params.id, {
+      include: [
+        {
           model: Course,
-          as: 'course'
-        }],
-      })
-      .then(course => {
+          as: 'course',
+        },
+      ],
+    })
+      .then((course) => {
         if (!course) {
           return res.status(404).send({
             message: 'Course Not Found',
@@ -66,7 +71,7 @@ module.exports = {
         }
         return course
           .update({
-            course_name: req.body.course_name || classroom.course_name,
+            course_name: req.body.course_name || 'default course',
           })
           .then(() => res.status(200).send(course))
           .catch((error) => res.status(400).send(error));
@@ -75,9 +80,8 @@ module.exports = {
   },
 
   delete(req, res) {
-    return Course
-      .findByPk(req.params.id)
-      .then(course => {
+    return Course.findByPk(req.params.id)
+      .then((course) => {
         if (!course) {
           return res.status(400).send({
             message: 'Course Not Found',

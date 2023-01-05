@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+
+const router = express.Router();
 
 const classroomController = require('../controllers').classroom;
 const studentController = require('../controllers').student;
@@ -7,7 +8,7 @@ const lecturerController = require('../controllers').lecturer;
 const courseController = require('../controllers').course;
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', (req, res) => {
   res.render('index', { title: 'Express' });
 });
 
@@ -41,7 +42,10 @@ router.delete('/api/course/:id', courseController.delete);
 
 /* Advance Router */
 router.post('/api/student/add_course', studentController.addCourse);
-router.post('/api/classroom/add_with_students', classroomController.addWithStudents);
+router.post(
+  '/api/classroom/add_with_students',
+  classroomController.addWithStudents
+);
 router.post('/api/lecturer/add_with_course', lecturerController.addWithCourse);
 
 module.exports = router;
